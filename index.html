@@ -140,6 +140,7 @@
   .table-scroll tbody tr:hover .tick{background:var(--surface-2)}
   .co{display:block; color:var(--ink-mute); font-family:var(--sans); font-weight:400; font-size:11.5px; letter-spacing:0; margin-top:1px}
   .what{color:var(--ink-soft); font-size:12.5px; max-width:22ch; text-align:left; line-height:1.4}
+  .why{font-size:13px; line-height:1.45; max-width:38ch; white-space:normal; color:var(--ink)}
   .moat{font-family:var(--mono); letter-spacing:.05em; white-space:nowrap; color:var(--ink)}
   .moat .off{color:var(--hair-strong)}
   .moat small{display:block; font-family:var(--sans); letter-spacing:0; color:var(--ink-mute); font-size:11px; margin-top:2px; text-align:left; max-width:19ch}
@@ -181,6 +182,81 @@
   </header>
 
   <section>
+    <h2><span class="num">01</span>What just moved — the July drawdown, and whether it's a dip</h2>
+    <p class="sub">Between <strong>25 June and 24 July</strong> the AI-semiconductor complex shed roughly <strong>$1.5 trillion</strong> of market value. It was not one selloff but three separate shocks inside ten sessions — a memory/AI-capex break, an EDA moat scare, and an earnings cluster. The table below refreshes daily with the market; the written read that follows is dated, and will age.</p>
+
+    <div class="callout" style="border-left-color:var(--warn);margin-bottom:18px">
+      <h2>Off the high is not the same as cheap</h2>
+      <p>The names that fell hardest are the ones that had gone vertical first. <strong>SK Hynix is ~40% below its high and still ~54% above its own 200-day average</strong>, up ~495% in a year. <strong>Micron is ~24% off — and still ~83% above trend</strong>, up ~740%. A 40% retracement of a parabola is not the 40% the rebound table is built on: that history is mostly real bear-market washouts, bought from <em>below</em> trend. The <strong>vs 200-day</strong> column exists to keep the two apart — <span style="color:var(--good);font-weight:700">green</span> means the fall has actually reached the trend line, grey means only the spike has come out.</p>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 10px">Prices as of <b style="color:var(--ink)">2026-07-25</b> · off-high refreshed daily</p>
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="l">Ticker</th><th class="l">Tier</th><th>1 mo</th><th>1 yr</th><th>Off hi</th><th>vs 200-day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="l tick">SKHY<span class="co">SK Hynix</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−33%</td><td class="num-cell pos">+495%</td><td class="num-cell neg">−40%</td><td class="num-cell"><span style="color:var(--ink-mute)">+54%</span></td></tr>
+          <tr><td class="l tick">INTC<span class="co">Intel</span></td><td class="l"><span class="badge b-frag">FRAGILE</span></td><td class="num-cell neg">−30%</td><td class="num-cell pos">+293%</td><td class="num-cell neg">−34%</td><td class="num-cell"><span style="color:var(--ink-mute)">+40%</span></td></tr>
+          <tr><td class="l tick">MRVL<span class="co">Marvell</span></td><td class="l"><span class="badge b-frag">FRAGILE</span></td><td class="num-cell neg">−30%</td><td class="num-cell pos">+166%</td><td class="num-cell neg">−39%</td><td class="num-cell"><span style="color:var(--ink-mute)">+46%</span></td></tr>
+          <tr><td class="l tick">3110<span class="co">Nitto Boseki</span></td><td class="l"><span class="badge b-frag">FRAGILE</span></td><td class="num-cell neg">−20%</td><td class="num-cell pos">+145%</td><td class="num-cell neg">−50%</td><td class="num-cell pos">−8%</td></tr>
+          <tr><td class="l tick">SNPS<span class="co">Synopsys</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−19%</td><td class="num-cell neg">−39%</td><td class="num-cell neg">−42%</td><td class="num-cell pos">−17%</td></tr>
+          <tr><td class="l tick">5802<span class="co">Sumitomo Elec</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−19%</td><td class="num-cell pos">+214%</td><td class="num-cell neg">−29%</td><td class="num-cell"><span style="color:var(--ink-mute)">+16%</span></td></tr>
+          <tr><td class="l tick">TSLA<span class="co">Tesla</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−17%</td><td class="num-cell neg">−6%</td><td class="num-cell neg">−36%</td><td class="num-cell pos">−25%</td></tr>
+          <tr><td class="l tick">CDNS<span class="co">Cadence</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−12%</td><td class="num-cell neg">+0%</td><td class="num-cell neg">−22%</td><td class="num-cell pos">+0%</td></tr>
+          <tr><td class="l tick">MU<span class="co">Micron</span></td><td class="l"><span class="badge b-frag">FRAGILE</span></td><td class="num-cell neg">−12%</td><td class="num-cell pos">+740%</td><td class="num-cell neg">−24%</td><td class="num-cell"><span style="color:var(--ink-mute)">+83%</span></td></tr>
+          <tr><td class="l tick">TSM<span class="co">Taiwan Semi</span></td><td class="l"><span class="badge b-prime">PRIME</span></td><td class="num-cell neg">−8%</td><td class="num-cell pos">+70%</td><td class="num-cell neg">−16%</td><td class="num-cell"><span style="color:var(--ink-mute)">+14%</span></td></tr>
+          <tr><td class="l tick">VRT<span class="co">Vertiv</span></td><td class="l"><span class="badge b-cond">CONDITIONAL</span></td><td class="num-cell neg">−8%</td><td class="num-cell pos">+123%</td><td class="num-cell neg">−23%</td><td class="num-cell"><span style="color:var(--ink-mute)">+19%</span></td></tr>
+          <tr><td class="l tick">GOOGL<span class="co">Alphabet</span></td><td class="l"><span class="badge b-prime">PRIME</span></td><td class="num-cell neg">−7%</td><td class="num-cell pos">+69%</td><td class="num-cell neg">−21%</td><td class="num-cell pos">−1%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">The twelve largest one-month decliners on the board. <strong>vs 200-day</strong> = last close against its own 200-session average: <b style="color:var(--good)">green</b> = below trend (the fall has retraced the move — the condition the rebound stats assume) · grey = still above trend (only the spike has unwound). All six columns refresh daily.</p>
+
+    <h3 style="font-family:var(--serif);font-size:20px;margin:28px 0 6px">What happened — ten sessions</h3>
+    <div style="max-width:84ch;font-size:14.5px;line-height:1.45;margin-top:10px">
+      <div style="padding:7px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--crit)">Jul 15–16 ⚠</span> &nbsp;<strong>Memory and AI-semis break.</strong> TSMC's outlook, a Bank of America note that AI chip pricing had run too hot, and reports Meta may rent out spare compute. SK Hynix −11.5% in a session, Marvell −8.7%, Micron −8.0%, Intel −5.8%. Japan's supply chain went with it — Nitto Boseki −7.7%, Sumitomo Electric −6.2%.</div>
+      <div style="padding:7px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--ink-mute)">Jul 17</span> &nbsp;<strong>EDA moat scare.</strong> A Kimi K3 demo ran an autonomous 48-hour chip design on open-source tools at a mature 45nm node. Cadence −9.5% and Synopsys −7.9% the same day.</div>
+      <div style="padding:7px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--ink-mute)">Jul 21</span> &nbsp;<strong>Relief rally.</strong> Micron +12.2%, Intel +8.6%, AMD +8.1%, TSM +5.5% — and it round-tripped within two sessions.</div>
+      <div style="padding:7px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--crit)">Jul 23 ⚠</span> &nbsp;<strong>Capex rebellion, and Tesla.</strong> Alphabet raised AI spending and fell 7.1% on the print. Tesla missed badly — $0.33 vs $0.49 expected, operating margin 1.4% against 4.1% a year ago — and dropped 14.5%.</div>
+      <div style="padding:7px 0"><span style="font-family:var(--mono);color:var(--ink-mute)">Jul 24</span> &nbsp;<strong>Second memory leg.</strong> Korea-led sympathy selling and de-risking into SK Hynix's print: Intel −7.9%, Marvell −7.2%, Micron −7.0% — while the S&amp;P 500 closed flat.</div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:20px;margin:28px 0 6px">The read — temporary or structural</h3>
+    <p class="sub">The most important fact is what <em>didn't</em> happen: <strong>hyperscaler capex was not cut — it was raised.</strong> The four big buyers are guiding to roughly <strong>$725B for 2026, up ~77%</strong> (Amazon ~$200B, Alphabet $175–185B, Meta up to $145B, Microsoft $120B+). What changed is that the market stopped paying for that spending and began demanding visible monetisation. That is a <em>multiple</em> problem, not yet a <em>demand</em> problem — and the event that would convert one into the other is a capex guide-down.</p>
+    <!-- extra class on purpose: build.py injects the "prices as of" caption before every
+         bare table-scroll div, and this table carries no prices. Do not remove why-table.
+         (Nor write the bare div string in a comment — the injector would match that too.) -->
+    <div class="table-scroll why-table">
+      <table>
+        <thead>
+          <tr><th class="l">What fell</th><th class="l">What actually broke</th><th class="l">Verdict</th></tr>
+        </thead>
+        <tbody>
+          <!-- tickers are wrapped in <b> so this table is not picked up by build.py's
+               tier-parser / row-rewriter regexes, which key on `class="l tick">TICKER<span class="co">` -->
+          <tr><td class="l tick"><b>MU · SKHY</b><span class="co">Memory</span></td><td class="l why">Positioning and sentiment, not orders — Micron's HBM is sold out for 2026 against ~$22B of customer commitments.</td><td class="l why"><b style="color:var(--warn)">Temporary — but not yet cheap.</b> The demand data holds; the price hasn't de-rated. Still 54–83% above their own trend after the fall.</td></tr>
+          <tr><td class="l tick"><b>INTC</b><span class="co">Intel</span></td><td class="l why">18A yield delay, and AMD took the data-centre revenue lead for the first time ($5.8B vs $5.1B).</td><td class="l why"><b style="color:var(--crit)">Company-specific, part structural.</b> FRAGILE tier = SKIP at any price by this page's rule. Still ~40% above trend after a −34% fall.</td></tr>
+          <tr><td class="l tick"><b>MRVL</b><span class="co">Marvell</span></td><td class="l why">Sell-the-news after S&amp;P 500 inclusion, reports Amazon moved next-gen Trainium design work elsewhere, and ASIC mix diluting gross margin.</td><td class="l why"><b style="color:var(--crit)">Real thesis damage</b>, not just sentiment. FRAGILE = SKIP.</td></tr>
+          <tr><td class="l tick"><b>SNPS · CDNS</b><span class="co">EDA</span></td><td class="l why">One demo, at 45nm, on open-source tools — a long way from production EDA at 2–3nm. Synopsys held full-year guidance.</td><td class="l why"><b style="color:var(--good)">Reaction looks overdone</b> — but SNPS peaked in Jul 2025 and has been de-rating for a year, so the demo is the trigger, not the cause. It is the deepest genuine de-rate on the board.</td></tr>
+          <tr><td class="l tick"><b>TSLA</b><span class="co">Tesla</span></td><td class="l why">Operating margin 1.4% from 4.1%, capex above $25B, free cash flow turning negative, robotaxi and Optimus reiterated without new milestones.</td><td class="l why"><b style="color:var(--crit)">A change in the financial profile</b>, not a sentiment wobble. The dip is genuine (~25% below trend) — so is the reason for it.</td></tr>
+          <tr><td class="l tick"><b>MSFT · META</b><span class="co">GOOGL · AMZN</span></td><td class="l why">Nothing in the business — they de-rated on the size of the capex bill, not on demand.</td><td class="l why"><b style="color:var(--good)">The cleanest setup on the board:</b> the only group that is PRIME, on a ladder rung, <em>and</em> back to or below its own trend.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="border-left-color:var(--good);margin-top:18px">
+      <h2>Where both tests pass</h2>
+      <p>Applying this page's own order of operations — quality tier first, price second — the names that are simultaneously <strong>PRIME</strong>, already <strong>on a ladder rung</strong>, and <strong>no longer trading above their own 200-day trend</strong> are the large-cap platforms: <strong>MSFT, META, GOOGL and AMZN</strong>. Among the semis, <strong>AVGO</strong> is nearest to qualifying (~21% off its high, only ~5% above trend); TSM and NVDA are on rungs but still above trend, and ASML is ~28% above it. The names that fell hardest are precisely the ones the ladder does <em>not</em> yet reward — they have dropped a long way and remain expensive against their own trend, and two of them (Intel, Marvell) are FRAGILE, which this framework treats as SKIP at any price. <em>Not advice — a mechanical framework.</em></p>
+      <p style="margin-top:12px"><strong>The next four days settle a lot of it.</strong> <span style="font-family:var(--mono);color:var(--crit)">Jul 29 ⚠</span> SK Hynix, Microsoft and Meta all report on the same day; <span style="font-family:var(--mono)">Jul 30</span> Amazon follows. The AI-capex question that caused this drawdown gets three answers in 48 hours — and Nvidia's Aug 26 print is the fourth.</p>
+    </div>
+    <p class="foot-note">Written 2026-07-25 from reporting dated 15–24 Jul 2026. Prices, ladder rungs and the movers table refresh daily; this commentary does not — treat the words as of their date and the numbers as of today's close. Single-day moves cited are closing changes on the dates shown.</p>
+  </section>
+
+  <section>
     <div class="callout">
       <h2>The shortlist &amp; the fair rebound law</h2>
       <p>For high beta <em>and</em> a moat that reliably recovers — the sweet spot for a leveraged dip-buy — these are the prime picks, plus the lower-beta anchors that fall less but are safest:</p>
@@ -193,7 +269,7 @@
   </section>
 
   <section>
-    <h2><span class="num">01</span>The full board</h2>
+    <h2><span class="num">02</span>The full board</h2>
     <p class="sub">Sorted best dip-buy → worst. Moat: ★ broken → ★★★★★ bulletproof. The four rebound columns — defined in the box below — all answer one question: <em>what happens after buying on a dip?</em> Scroll for all columns; ticker stays pinned.</p>
     <div class="legend" style="margin-bottom:16px">
       <div><span class="badge b-prime">PRIME</span> crash = near-certain recovery</div>
@@ -359,7 +435,7 @@
   </section>
 
   <section>
-    <h2><span class="num">02</span>Why the fair metric matters</h2>
+    <h2><span class="num">03</span>Why the fair metric matters</h2>
     <p>The earlier "trough → peak" numbers were unfair two ways — they cherry-picked the best subsequent moment, and "trough → now" just reflected where each name sits in its <em>own</em> cycle today. The fair metric fixes both: <strong>the median 12-month return from <em>every</em> day the stock was ≥20% off its high</strong> — same trigger, same horizon, all instances. What it shows:</p>
     <ul>
       <li><strong>Pays most <em>and</em> reliably:</strong> AVGO (+73%, 100% hit, +15% worst-case), META (+85%, +58% vs market), CEG, CDNS, and — notably — <strong>TSM (+54%, +30% vs market, up 87% of the time)</strong>. "Cheap won't bounce" was wrong.</li>
@@ -372,7 +448,7 @@
   </section>
 
   <section>
-    <h2><span class="num">03</span>When to deploy — ladder status &amp; the catalyst window</h2>
+    <h2><span class="num">04</span>When to deploy — ladder status &amp; the catalyst window</h2>
     <p class="sub">The method is mechanical: don't predict the dip — let each name's <em>own</em> drawdown trigger the buy, back-weighted so the biggest adds land on the deepest, cheapest rungs, in deep-ITM LEAPS so an early entry can't be liquidated. This panel reads the live off-high against those rungs and flags who's in a buy zone <em>today</em>. The signal is quality-gated: only PRIME / CONDITIONAL names earn a <b style="color:var(--good)">DEPLOY</b> — FRAGILE / AVOID dips don't reliably recover (the anti-Cisco rule), so they're <b style="color:var(--ink-mute)">SKIP</b> even when deeply down. Dip→1y is the fair-rebound reward from the section above. <em>Not advice — a mechanical framework.</em></p>
     <p style="font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 10px">Prices as of <b style="color:var(--ink)">2026-07-25</b> · off-high refreshed daily</p>
       <div class="table-scroll">
@@ -441,7 +517,7 @@
   </section>
 
   <section>
-    <h2><span class="num">04</span>Cybersecurity — AI's next demand leg</h2>
+    <h2><span class="num">05</span>Cybersecurity — AI's next demand leg</h2>
     <p class="sub">You're right that an AI world needs more security, and the peer-reviewed literature backs it: AI <em>expands</em> the attack surface — adversarial ML, data poisoning, prompt injection, agentic-AI risk, and a machine-identity explosion (~109 machine identities per human). Gartner sees information-security spend hitting <strong>$244B in 2026 (+13%) → $322B by 2029</strong>, explicitly driven by AI on both offense and defense.</p>
     <div class="callout" style="border-left-color:var(--warn); margin-bottom:20px">
       <p style="margin:0;max-width:none"><strong>Caveat — this sector is <em>not</em> dipping right now.</strong> CrowdStrike and Palo Alto rose ~95% and ~113% in Q2 2026 (their best quarter ever) on the AI-security bid, so treat this as a <em>watchlist for when a crash comes</em>, not a buy-today list. And the pure-plays got absorbed: <strong>Palo Alto closed its $25B CyberArk acquisition (Feb 2026)</strong>, bought Chronosphere (observability) and Protect AI, so identity + observability + AI-model security now express through PANW — there's no clean public "AI-security pure-play" left.</p>
@@ -498,7 +574,7 @@
   </section>
 
   <section>
-    <h2><span class="num">05</span>Japan's AI supply chain — the hidden derivatives</h2>
+    <h2><span class="num">06</span>Japan's AI supply chain — the hidden derivatives</h2>
     <p class="sub">Nvidia's Jensen Huang courted 16 Japanese suppliers at a Tokyo izakaya (15 Jul 2026) — the materials, equipment and packaging layer beneath every AI chip. Most of that list already re-rated hard in H1 2026 (Tokyo Electron, Taiyo Yuden and Kioxia sit at or near record highs, priced for it). The first three still have unpriced structural value or a live catalyst; Nitto Boseki — the glass-cloth monopoly — is the cautionary comparison: a real chokepoint the market has already re-rated. The dinner was a spotlight, not a signed deal.</p>
     <p style="font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 10px">Prices as of <b style="color:var(--ink)">2026-07-25</b> · off-high refreshed daily</p>
       <div class="table-scroll">
@@ -538,7 +614,7 @@
   </section>
 
   <section>
-    <h2><span class="num">06</span>The two Elon names, reworked</h2>
+    <h2><span class="num">07</span>The two Elon names, reworked</h2>
     <div class="grid2">
       <div>
         <h3 style="font-family:var(--serif);font-size:20px;margin:0 0 8px">Tesla — upgraded, with a catch that matters</h3>
@@ -562,7 +638,7 @@
   </section>
 
   <section>
-    <h2><span class="num">07</span>The IPO calendar is a catalyst, not just a threat</h2>
+    <h2><span class="num">08</span>The IPO calendar is a catalyst, not just a threat</h2>
     <p>OpenAI (~$1T, may slip to 2027) and Anthropic (~$965B) are the pending mega-IPOs; SpaceX (June), SK Hynix's $26.5B ADR (July) and Cerebras (May) already priced. The liquidity-drain worry is <strong>real but overstated</strong> — a ~$200B AI-issuance wave is the biggest supply shock on record, but ~$1.5T of 2026 buybacks plausibly swamp it, and much IPO demand is incremental rather than incumbent-dollars rotating out.</p>
     <p><strong>What it means:</strong> expect <em>episodic, headline-driven dips around each pricing and lockup</em> — those are potential entry windows — rather than a sustained drain. SpaceX's Aug–Dec lockup and any OpenAI/Anthropic pricing wobble are more likely to <em>create</em> the dip than to threaten the durable names.</p>
   </section>
