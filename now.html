@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="ServiceNow deep dive — the bear case for AI ending seat-based software, and the three mechanisms that answer it.">
+<style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0}</style>
+<title>ServiceNow — the SaaS name the AI trade is betting against</title>
+<style>
+  :root{
+    --bg:#eceef1; --surface:#ffffff; --surface-2:#f5f6f8;
+    --ink:#191c22; --ink-soft:#474d57; --ink-mute:#767c88;
+    --hair:#dadde2; --hair-strong:#c6cad0; --brass:#8f6d2f;
+    --good:#1c8a58; --good-bg:#e4f1ea;
+    --warn:#9d7415; --warn-bg:#f5ecd6;
+    --orange:#c15a2c; --orange-bg:#f8e6da;
+    --crit:#a52639; --crit-bg:#f5dee1;
+    --wait:#3a63a6; --wait-bg:#e4ebf7;
+    --measure:66ch;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1217; --surface:#161a21; --surface-2:#1b202a;
+      --ink:#e7e9ee; --ink-soft:#b6bcc6; --ink-mute:#828994;
+      --hair:#272d38; --hair-strong:#333a47; --brass:#c69a52;
+      --good:#4dc088; --good-bg:#13301f;
+      --warn:#d3a63f; --warn-bg:#332913;
+      --orange:#e07f4f; --orange-bg:#3a2114;
+      --crit:#e0687a; --crit-bg:#37151d;
+      --wait:#7ea2df; --wait-bg:#16223a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1217; --surface:#161a21; --surface-2:#1b202a;
+    --ink:#e7e9ee; --ink-soft:#b6bcc6; --ink-mute:#828994;
+    --hair:#272d38; --hair-strong:#333a47; --brass:#c69a52;
+    --good:#4dc088; --good-bg:#13301f;
+    --warn:#d3a63f; --warn-bg:#332913;
+    --orange:#e07f4f; --orange-bg:#3a2114;
+    --crit:#e0687a; --crit-bg:#37151d;
+    --wait:#7ea2df; --wait-bg:#16223a;
+  }
+  :root[data-theme="light"]{
+    --bg:#eceef1; --surface:#ffffff; --surface-2:#f5f6f8;
+    --ink:#191c22; --ink-soft:#474d57; --ink-mute:#767c88;
+    --hair:#dadde2; --hair-strong:#c6cad0; --brass:#8f6d2f;
+    --good:#1c8a58; --good-bg:#e4f1ea;
+    --warn:#9d7415; --warn-bg:#f5ecd6;
+    --orange:#c15a2c; --orange-bg:#f8e6da;
+    --crit:#a52639; --crit-bg:#f5dee1;
+    --wait:#3a63a6; --wait-bg:#e4ebf7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0}
+  .wrap{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Charter,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; letter-spacing:.005em;
+    padding:clamp(20px,5vw,64px) clamp(16px,4vw,48px) 96px;
+  }
+  .page{max-width:1180px; margin:0 auto}
+  section{margin-top:clamp(40px,6vw,72px)}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--brass); display:flex; align-items:center; gap:12px; margin:0 0 18px;
+  }
+  .eyebrow::after{content:""; flex:1; height:1px; background:var(--brass); opacity:.5}
+  h1{
+    font-family:var(--serif); font-weight:600; font-size:clamp(30px,5.2vw,50px);
+    line-height:1.05; letter-spacing:-.01em; text-wrap:balance; margin:0 0 .5rem;
+  }
+  .lede{max-width:var(--measure); color:var(--ink-soft); font-size:clamp(16px,2vw,18.5px); margin:0}
+  .meta{
+    font-family:var(--mono); font-size:12.5px; color:var(--ink-mute);
+    margin-top:20px; display:flex; flex-wrap:wrap; gap:6px 18px; padding-top:16px;
+    border-top:1px solid var(--hair);
+  }
+  .meta b{color:var(--ink-soft); font-weight:600}
+  h2{
+    font-family:var(--serif); font-weight:600; font-size:clamp(22px,3.2vw,29px);
+    letter-spacing:-.01em; text-wrap:balance; margin:0 0 6px;
+  }
+  h2 .num{font-family:var(--mono); font-size:.55em; color:var(--brass); margin-right:.7em; letter-spacing:0; vertical-align:.18em}
+  .sub{color:var(--ink-mute); max-width:78ch; margin:0 0 22px; font-size:15px}
+  p{max-width:var(--measure)} p:first-child{margin-top:0}
+  strong{font-weight:650}
+  a{color:var(--wait); text-underline-offset:2px}
+  .callout{
+    background:var(--surface); border:1px solid var(--hair-strong);
+    border-left:3px solid var(--brass); border-radius:10px; padding:22px 24px; margin-top:8px;
+  }
+  .callout h2{margin-top:0}
+  .pick-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px}
+  .pick{
+    font-family:var(--mono); font-size:13px; font-weight:600;
+    padding:5px 11px; border-radius:999px; background:var(--good-bg); color:var(--good);
+    border:1px solid color-mix(in srgb,var(--good) 30%, transparent);
+  }
+  .pick.anchor{background:var(--surface-2); color:var(--ink-soft); border-color:var(--hair-strong)}
+  .legend{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:10px 22px; font-size:13.5px; color:var(--ink-soft);
+    background:var(--surface-2); border:1px solid var(--hair); border-radius:10px; padding:16px 20px;
+  }
+  .legend div{display:flex; gap:9px; align-items:baseline}
+  .badge{
+    font-family:var(--mono); font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:3px 9px; border-radius:6px; white-space:nowrap; flex:none;
+  }
+  .b-prime{background:var(--good-bg); color:var(--good)}
+  .b-cond{background:var(--warn-bg); color:var(--warn)}
+  .b-frag{background:var(--orange-bg); color:var(--orange)}
+  .b-avoid{background:var(--crit-bg); color:var(--crit)}
+  .b-wait{background:var(--wait-bg); color:var(--wait)}
+  .table-scroll{
+    overflow-x:auto; border:1px solid var(--hair-strong); border-radius:12px;
+    background:var(--surface); -webkit-overflow-scrolling:touch;
+  }
+  .table-scroll table{border-collapse:collapse; width:100%; min-width:1120px; font-size:13.5px}
+  .table-scroll thead th{
+    /* top:0 only. `overflow-x:auto` makes this wrapper a scroll container, so any
+       positive offset pushes the header DOWN inside the table and hides row 1. */
+    position:sticky; top:0; z-index:2; background:var(--surface-2);
+    font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-mute); text-align:right; padding:13px 12px; white-space:nowrap;
+    border-bottom:1px solid var(--hair-strong);
+  }
+  .table-scroll thead th.l,.table-scroll tbody td.l{text-align:left}
+  .table-scroll tbody td{padding:12px; border-bottom:1px solid var(--hair); vertical-align:top; text-align:right}
+  .table-scroll tbody tr:last-child td{border-bottom:none}
+  .table-scroll tbody tr:hover td{background:var(--surface-2)}
+  .num-cell{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink)}
+  .tick{
+    position:sticky; left:0; z-index:1; background:var(--surface);
+    font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:.01em;
+    border-right:1px solid var(--hair-strong);
+  }
+  .table-scroll tbody tr:hover .tick{background:var(--surface-2)}
+  .co{display:block; color:var(--ink-mute); font-family:var(--sans); font-weight:400; font-size:11.5px; letter-spacing:0; margin-top:1px}
+  .what{color:var(--ink-soft); font-size:12.5px; max-width:22ch; text-align:left; line-height:1.4}
+  .why{font-size:13px; line-height:1.45; max-width:38ch; white-space:normal; color:var(--ink)}
+  .moat{font-family:var(--mono); letter-spacing:.05em; white-space:nowrap; color:var(--ink)}
+  .moat .off{color:var(--hair-strong)}
+  .moat small{display:block; font-family:var(--sans); letter-spacing:0; color:var(--ink-mute); font-size:11px; margin-top:2px; text-align:left; max-width:19ch}
+  td .verdict{font-family:var(--sans); font-weight:400; color:var(--ink-mute); font-size:11px; display:block; margin-top:4px; text-align:left; max-width:20ch; line-height:1.35}
+  .neg{color:var(--crit)} .pos{color:var(--good)}
+  .rb{font-weight:700}
+  .w10{font-size:.88em; color:var(--ink-mute)}
+  .foot-note{font-size:12.5px; color:var(--ink-mute); margin-top:12px; max-width:82ch}
+  .grid2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:28px}
+  .grid2>*{min-width:0}
+  @media (max-width:720px){.grid2{grid-template-columns:minmax(0,1fr)}}
+  .kv{width:100%; border-collapse:collapse; font-size:14px; margin-top:6px}
+  .kv th{text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-mute); padding:8px 10px; border-bottom:1px solid var(--hair-strong)}
+  .kv td{padding:9px 10px; border-bottom:1px solid var(--hair); font-variant-numeric:tabular-nums}
+  .kv td.r,.kv th.r{text-align:right; font-family:var(--mono)}
+  .kv tr:last-child td{border-bottom:none}
+  .price-band{font-family:var(--mono); font-weight:700; color:var(--good)}
+  ul{padding-left:1.1em; max-width:var(--measure)} li{margin:.3em 0}
+  footer{margin-top:72px; padding-top:24px; border-top:1px solid var(--hair-strong); color:var(--ink-mute); font-size:12.5px}
+  .disclaim{background:var(--surface-2); border:1px solid var(--hair); border-radius:10px; padding:14px 18px; font-size:12.5px; color:var(--ink-soft); margin-top:18px; max-width:none}
+  :focus-visible{outline:2px solid var(--wait); outline-offset:2px; border-radius:3px}
+
+  /* ── sticky section nav ─────────────────────────────────────────────── */
+  html{scroll-behavior:smooth}
+  h2[id]{scroll-margin-top:76px}
+  .tocbar{
+    position:sticky; top:10px; z-index:50; display:flex; align-items:center; gap:6px;
+    background:color-mix(in srgb,var(--surface) 86%, transparent);
+    -webkit-backdrop-filter:saturate(170%) blur(14px); backdrop-filter:saturate(170%) blur(14px);
+    border:1px solid var(--hair-strong); border-radius:999px;
+    padding:7px 10px 7px 16px; margin:clamp(28px,4vw,40px) 0 0;
+    box-shadow:0 10px 30px -18px rgba(0,0,0,.55);
+    overflow-x:auto; scrollbar-width:none;
+  }
+  .tocbar::-webkit-scrollbar{display:none}
+  .toc-brand{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--brass); font-weight:700; text-decoration:none; white-space:nowrap; padding-right:8px;
+    border-right:1px solid var(--hair); margin-right:4px; flex:none;
+  }
+  .toc-links{display:flex; gap:1px; align-items:center}
+  .toc-links a{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.03em; color:var(--ink-mute);
+    text-decoration:none; padding:6px 9px; border-radius:999px; white-space:nowrap;
+    transition:background .15s, color .15s;
+  }
+  .toc-links a:hover{background:var(--surface-2); color:var(--ink)}
+  .toc-links a b{color:var(--brass); font-weight:700; margin-right:6px; opacity:.8}
+
+  /* ── hero stat strip ────────────────────────────────────────────────── */
+  .stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:26px}
+  @media (max-width:860px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .stat{
+    background:var(--surface); border:1px solid var(--hair-strong); border-radius:12px;
+    padding:15px 17px; position:relative; overflow:hidden;
+  }
+  .stat::before{content:""; position:absolute; inset:0 auto 0 0; width:2px; background:var(--brass); opacity:.55}
+  .stat .k{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-mute); display:block}
+  .stat .v{font-family:var(--serif); font-size:clamp(26px,3.6vw,34px); line-height:1.05; letter-spacing:-.015em; display:block; margin-top:7px; font-variant-numeric:tabular-nums}
+  .stat .n{font-size:11.5px; color:var(--ink-mute); display:block; margin-top:4px; line-height:1.35}
+
+  /* ── off-high gauge ─────────────────────────────────────────────────── */
+  .bar{display:block; width:54px; height:3px; border-radius:2px; background:var(--hair); margin:5px 0 0 auto; overflow:hidden}
+  .bar i{display:block; height:100%; background:var(--crit); border-radius:2px; opacity:.85}
+
+  /* ── Mag-7 tag ──────────────────────────────────────────────────────── */
+  .m7{
+    display:inline-block; font-family:var(--mono); font-size:8.5px; font-weight:700; letter-spacing:.1em;
+    color:var(--brass); border:1px solid color-mix(in srgb,var(--brass) 42%, transparent);
+    border-radius:4px; padding:1px 4px; margin-top:5px; line-height:1.5;
+  }
+
+  /* ── collapsible explainers ─────────────────────────────────────────── */
+  details.expl{background:var(--surface); border:1px solid var(--hair-strong); border-left:3px solid var(--brass); border-radius:10px; margin-bottom:16px}
+  details.expl summary{
+    cursor:pointer; padding:14px 20px; font-size:14.5px; font-weight:650; color:var(--ink);
+    list-style:none; display:flex; align-items:center; gap:10px;
+  }
+  details.expl summary::-webkit-details-marker{display:none}
+  details.expl summary::after{content:"+"; margin-left:auto; font-family:var(--mono); font-size:17px; color:var(--ink-mute); flex:none}
+  details.expl[open] summary::after{content:"–"}
+  details.expl summary:hover{color:var(--brass)}
+  details.expl .body{padding:0 20px 18px}
+  details.expl .body>*:first-child{margin-top:0}
+
+  /* ── sortable columns ───────────────────────────────────────────────── */
+  .table-scroll thead th.sortable{cursor:pointer; user-select:none; -webkit-user-select:none; position:relative; padding-right:20px}
+  .table-scroll thead th.sortable:hover{color:var(--ink); background:var(--hair)}
+  .table-scroll thead th.sortable::after{
+    content:"⇅"; position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    font-size:10px; opacity:.3; transition:opacity .15s;
+  }
+  .table-scroll thead th.sortable:hover::after{opacity:.6}
+  .table-scroll thead th.sortable[data-dir="asc"]::after{content:"▲"; opacity:1; color:var(--brass); font-size:8px}
+  .table-scroll thead th.sortable[data-dir="desc"]::after{content:"▼"; opacity:1; color:var(--brass); font-size:8px}
+  .table-scroll thead th.sortable[data-dir]{color:var(--ink)}
+  .sort-hint{font-size:12px; color:var(--ink-mute); margin:8px 0 0; font-family:var(--mono); letter-spacing:.03em}
+
+  /* ── column tooltips ────────────────────────────────────────────────── */
+  /* A single position:fixed box on <body>, moved by JS and clamped to the
+     viewport. A CSS bubble anchored to the cell would be clipped, because the
+     table wrapper is an overflow container in both axes. */
+  .table-scroll thead th[data-tip]{cursor:help}
+  .tipbox{
+    position:fixed; z-index:200; max-width:300px; pointer-events:none;
+    font-family:var(--sans); font-size:12.5px; font-weight:400; line-height:1.5;
+    letter-spacing:0; text-transform:none; text-align:left; color:var(--ink);
+    background:var(--surface); border:1px solid var(--hair-strong); border-radius:9px;
+    padding:11px 14px; box-shadow:0 14px 38px -12px rgba(0,0,0,.55);
+    opacity:0; visibility:hidden; transition:opacity .12s;
+  }
+  .tipbox.on{opacity:1; visibility:visible}
+  .tipbox b{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--brass); margin-bottom:5px}
+  .rank{font-weight:700; font-size:15px}
+  .thin{font-size:.72em; color:var(--warn); margin-left:1px}
+
+  /* ── section rules ──────────────────────────────────────────────────── */
+  section>h2[id]{padding-top:26px; border-top:1px solid var(--hair)}
+  @media (max-width:640px){
+    .tocbar{border-radius:14px; top:6px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+</style>
+</head>
+<body>
+<div class="wrap"><div class="page" id="top">
+
+  <header>
+    <p class="eyebrow">flyingping · Deep dive</p>
+    <h1>ServiceNow — the SaaS name the AI&nbsp;trade is betting against</h1>
+    <p class="lede">The stock is −58% off its high while the business accelerated. That gap is either the best setup on the board or the market correctly pricing the end of seat-based software. This page lays out the bear case at its strongest, then the three mechanisms that answer it — and the parts that don't hold up.</p>
+    <div class="meta">
+      <span><b>Updated</b> 2026-07-25 · prices auto-refreshed daily</span>
+      <span><b>Company data</b> Q2 FY26 (reported 22 Jul 2026)</span>
+      <span><b>Flags</b> fact / forecast / opinion noted inline</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="k">Price</span><span class="v">$99</span><span class="n">off its all-time high by −58%</span></div>
+      <div class="stat"><span class="k">vs 200-day</span><span class="v">−22%</span><span class="n">genuinely de-rated, not a spike unwinding</span></div>
+      <div class="stat"><span class="k">Last 12 months</span><span class="v">−48%</span><span class="n">while subscription revenue grew 24.5%</span></div>
+      <div class="stat"><span class="k">Dip→1y</span><span class="v">+49%</span><span class="n">median year after any ≥20%-off day</span></div>
+    </div>
+  </header>
+
+  <nav class="tocbar" aria-label="Sections">
+    <a class="toc-brand" href="index.html">← the board</a>
+    <div class="toc-links">
+      <a href="#s1"><b>01</b>The setup</a>
+      <a href="#s2"><b>02</b>The bear case</a>
+      <a href="#s3"><b>03</b>What hasn't broken</a>
+      <a href="#s4"><b>04</b>The pricing shift</a>
+      <a href="#s5"><b>05</b>Security &amp; governance</a>
+      <a href="#s6"><b>06</b>What doesn't hold up</a>
+      <a href="#s7"><b>07</b>What could go wrong</a>
+      <a href="#s8"><b>08</b>Verdict</a>
+    </div>
+  </nav>
+
+  <section>
+    <h2 id="s1"><span class="num">01</span>The setup</h2>
+    <p class="sub">Two facts sit on top of each other and refuse to reconcile. Everything below is an attempt to work out which one is the mistake.</p>
+    <div class="grid2">
+      <div class="callout" style="border-left-color:var(--crit)">
+        <h2 style="font-size:20px">What the price says</h2>
+        <p style="max-width:none">Down <strong>−58%</strong> from its high and <strong>−22%</strong> below its own 200-day average — the deepest genuine de-rate on the board, and the worst drawdown in the company's listed history at <strong>−65%</strong> at the trough. It has been underwater <strong>17.8 months</strong>, longer than any other name tracked here. This is not a panic. It is a sustained repricing of terminal value.</p>
+      </div>
+      <div class="callout" style="border-left-color:var(--good)">
+        <h2 style="font-size:20px">What the business says</h2>
+        <p style="max-width:none">Q2 FY26 subscription revenue <strong>+24.5%</strong> year on year, beating the top of guidance by 150bps. Full-year guidance <strong>raised</strong> by roughly $220M to $15.76–15.78B. Remaining performance obligation <strong>~$29B, +22%</strong>. AI contract value crossed <strong>$1B</strong>. Renewal rate <strong>98%</strong>.</p>
+      </div>
+    </div>
+    <p class="foot-note">The market has had <strong>17.8 months</strong> to be proved right. In that entire window the bear case has produced no fundamental evidence — it remains a claim about what AI <em>will</em> do, not what it has done. That is the central tension, and it can be read either as the market being early or the market being wrong.</p>
+  </section>
+
+  <section>
+    <h2 id="s2"><span class="num">02</span>The bear case, at its strongest</h2>
+    <p class="sub">Stated properly, because a thesis is only worth holding if it survives the best version of the argument against it. This is not a strawman — it is well-sourced and it is why the stock is where it is.</p>
+    <div class="callout" style="border-left-color:var(--crit)">
+      <p style="max-width:none"><strong>AI kills per-seat pricing.</strong> One person plus an agent does the work of three, so the vendor sells fewer seats. Enterprise software priced per human logs a headcount-linked revenue line into a world that is actively reducing headcount. Gartner projects AI agents will divert <strong>$234B of enterprise software spend by 2030</strong>. IDC expects pure seat-based pricing to be <strong>obsolete by 2028</strong>, with <strong>70% of software vendors</strong> forced to refactor toward consumption, outcomes or capability pricing.</p>
+      <p style="max-width:none;margin-top:12px"><strong>And the workflow layer is the most exposed part of it.</strong> If a company can point an AI at its own systems and generate the workflow app it needs, the argument for paying a vendor for configurable workflows weakens every year. ServiceNow's core is IT service management — routing, approvals, ticket handling — which is exactly the category of work agents are being built to absorb.</p>
+    </div>
+    <p style="margin-top:16px">That case is coherent, and it is the correct default for most seat-based SaaS. The rest of this page is about whether it applies to <em>this</em> company. Three mechanisms argue it does not — one is decisive, one is strong, one is over-rated.</p>
+  </section>
+
+  <section>
+    <h2 id="s3"><span class="num">03</span>The thing that would break first, and hasn't</h2>
+    <p class="sub">If agents were eating seats, it would not show up first in the share price. It would show up in renewals — customers coming back for less. That is the leading indicator, and it is clean.</p>
+    <div class="table-scroll why-table">
+      <table>
+        <thead><tr><th class="l">Indicator</th><th class="l">What it would look like if the bear case were true</th><th class="l">What it actually shows</th></tr></thead>
+        <tbody>
+          <tr><td class="l"><strong>Renewal rate</strong></td><td class="l why">Customers renewing for fewer seats; rate slipping into the low 90s.</td><td class="l why"><strong>98%, six years running.</strong> Has not moved.</td></tr>
+          <tr><td class="l"><strong>Revenue growth</strong></td><td class="l why">Steady deceleration as seat expansion stalls.</td><td class="l why">Decelerated — then <strong>re-accelerated</strong>: 25.5% (2023) → 23% (2024) → 20.9% (2025) → <strong>24.5%</strong> (Q2 2026).</td></tr>
+          <tr><td class="l"><strong>Forward bookings</strong></td><td class="l why">RPO growth falling below revenue growth as customers shorten commitments.</td><td class="l why">RPO <strong>~$29B, +22%</strong>, with average contract <em>duration increasing</em>.</td></tr>
+          <tr><td class="l"><strong>Guidance</strong></td><td class="l why">Management trimming the year as the pipeline thins.</td><td class="l why"><strong>Raised</strong> ~$220M at the Q2 print.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">One honest qualifier: renewal rate is partly lagging. Enterprise contracts run multiple years and renew on a stagger, so disruption would appear gradually rather than at once. Rising contract duration can equally be read as strength (customers committing longer) or as defensive lock-in ahead of a weakening cycle. It is genuinely ambiguous and is presented that way.</p>
+  </section>
+
+  <section>
+    <h2 id="s4"><span class="num">04</span>The pricing shift — the decisive mechanism</h2>
+    <p class="sub">This is the strongest single fact on this page, and it is the direct answer to the bear case rather than a deflection from it.</p>
+    <div class="callout" style="border-left-color:var(--good)">
+      <h2 style="font-size:21px">Roughly half of new business is already off seats</h2>
+      <p style="max-width:none">In April 2026 CFO Gina Mastantuono said <strong>~50% of new annual contract value now comes from non-seat models</strong> — tokens, connectors, usage. Now Assist is priced per <em>assist</em>: a small generative task costs 25 assists, a large agentic action 150. The full-year AI ACV target was raised from <strong>$1B to at least $1.5B</strong>.</p>
+      <p style="max-width:none;margin-top:12px">Read that against the bear case in section 02. IDC says 70% of vendors will be <em>forced</em> to refactor pricing toward consumption by 2028. ServiceNow is already about halfway through that refactor. Under per-assist pricing, <strong>more agents means more revenue, not fewer seats</strong> — the disruption vector and the growth vector become the same thing.</p>
+    </div>
+    <p style="margin-top:16px"><strong>What this does not mean.</strong> Fifty percent of <em>new</em> ACV is not fifty percent of revenue — the installed base remains overwhelmingly seat-based, so the transition is early and reversible. And consumption pricing is not a free upgrade: seat revenue is sticky and forecastable, usage revenue falls when customers optimise. Anyone who held cloud infrastructure names through the 2022–23 optimisation cycle has seen how fast a consumption line can decelerate. The company has swapped one risk for a different one, not for none.</p>
+  </section>
+
+  <section>
+    <h2 id="s5"><span class="num">05</span>The security and governance leg</h2>
+    <p class="sub">Real, expensive, and the most over-rated of the three arguments — including in the version that prompted this page.</p>
+    <p>Security &amp; Risk is a <strong>10-figure business</strong> in management's own words — $1B+ of revenue, one of the fastest-growing parts of the portfolio, and present in <strong>16 of the top 20 deals</strong> in Q2 FY26. ServiceNow bought its way deeper in, fast:</p>
+    <table class="kv" style="max-width:560px">
+      <tr><th>Acquisition</th><th class="r">Price</th><th class="r">Closed</th></tr>
+      <tr><td><strong>Armis</strong> — OT / IoT / medical-device security, cyber exposure</td><td class="r">$7.75B</td><td class="r">Apr 2026</td></tr>
+      <tr><td><strong>Veza</strong> — identity security, access across human/machine/AI</td><td class="r">~$1B</td><td class="r">Mar 2026</td></tr>
+    </table>
+    <p style="margin-top:16px">Armis is <strong>the largest acquisition in the company's history</strong>. The strategic logic is coherent: a company can use AI to build its own workflow apps, but what it cannot easily build is a <strong>compliant, audited control plane across systems it does not own</strong>. AI Control Tower now claims to discover, govern, secure and measure AI deployed across <em>any</em> system, with 30 integrations spanning AWS, Google Cloud and Azure plus SAP, Oracle and Workday. Armis supplies what assets exist; Veza supplies who and what can reach them.</p>
+    <p style="margin-top:12px">There is a second-order point that matters more than the revenue: <strong>Armis and Veza price off assets and identities, not seats.</strong> Device counts, OT endpoints, machine and AI identities all <em>multiply</em> as agents proliferate. So the largest deal in company history moves the revenue mix further away from the exposure the market is marking the stock down for.</p>
+    <div class="callout" style="border-left-color:var(--warn);margin-top:18px">
+      <h2 style="font-size:20px">Why this is the weakest of the three arguments anyway</h2>
+      <p style="max-width:none">Microsoft integrated <strong>Agent 365</strong> with ServiceNow's AI Control Tower rather than routing around it, which reads as validation. It is equally the largest structural risk here. Microsoft has a long record of absorbing adjacent control layers once they prove valuable, and the governance-layer position is barely a year old and entirely unproven as a durable moat. If agent governance ends up inside Agent 365, this is the most exposed part of the business rather than the safest. It is also ~6–7% of revenue — a hedge, not a thesis.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="s6"><span class="num">06</span>A popular claim that does not hold up</h2>
+    <p class="sub">Included because it circulates widely, and because a page that only collects supporting evidence is worth nothing.</p>
+    <div class="callout" style="border-left-color:var(--crit)">
+      <p style="max-width:none"><strong>Claim: companies are ripping out SAP and replacing it with ServiceNow plus Workday.</strong></p>
+      <p style="max-width:none;margin-top:10px"><strong>Mostly false.</strong> Wholesale SAP replacement is uncommon — switching costs and operational centrality make it rare regardless of how unhappy the customer is, and SAP's 2025 NPS of <strong>9</strong> shows the unhappiness is real without producing the migration. What actually happens splits in two: <strong>Workday does displace SAP SuccessFactors in HCM</strong> (54 detected migrations to Workday against 19 back), but <strong>ServiceNow does not replace SAP</strong>. It runs an end-run around ERP — enterprises <em>abstract</em> existing systems through ServiceNow while leaving the system of record exactly where it is.</p>
+      <p style="max-width:none;margin-top:10px"><em>The reality is arguably better than the claim.</em> Wrapping SAP monetises the customer without owning a multi-year migration, and it keeps paying whether that customer stays on ECC, moves to S/4HANA, or leaves. But anyone holding the stock for an ERP-displacement story is holding it for something that is not happening.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="s7"><span class="num">07</span>What could still go wrong</h2>
+    <p class="sub">The four ways this thesis breaks, in rough order of how much they should worry a holder.</p>
+    <div style="max-width:84ch;font-size:14.5px;line-height:1.5;margin-top:10px">
+      <div style="padding:9px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--crit)">01 ⚠</span> &nbsp;<strong>The record is from a regime that may have ended.</strong> Nine of its ten prior ≥20% drawdowns recovered — every one of them earned in a world where SaaS seat growth was unquestioned. A perfect record from a superseded regime is weak evidence about the new one. This is exactly how Cisco's dip statistics looked flawless until early 2000.</div>
+      <div style="padding:9px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--crit)">02 ⚠</span> &nbsp;<strong>Microsoft absorbs the governance layer.</strong> Today's Agent 365 partnership is the newest moat's single point of failure. See section 05.</div>
+      <div style="padding:9px 0;border-bottom:1px solid var(--hair)"><span style="font-family:var(--mono);color:var(--ink-mute)">03</span> &nbsp;<strong>Consumption revenue decelerates.</strong> The pricing shift removes seat risk and adds usage risk. Customers optimising their assist consumption would hit revenue faster and harder than seat attrition ever could.</div>
+      <div style="padding:9px 0"><span style="font-family:var(--mono);color:var(--ink-mute)">04</span> &nbsp;<strong>Integration.</strong> ~$8.75B of cash for a business currently generating $1B+, spent while the market is punishing exactly this kind of outlay. Large acquisitions absorb management attention at the worst possible time.</div>
+    </div>
+    <p class="foot-note" style="margin-top:18px">And the uncomfortable meta-point: the market has had the 50% non-seat figure since April 2026 and de-rated the stock anyway. Either it is wrong, or it doubts the transition converts to durable revenue. That is not something this page can settle.</p>
+  </section>
+
+  <section>
+    <h2 id="s8"><span class="num">08</span>Where this leaves it</h2>
+    <p class="sub">Applying the same mechanical screen as the main board, and then the part the screen cannot see.</p>
+    <p><strong>On the screen, it ranks near the top.</strong> It clears all three gates — quality tier, ≥10% off its high, below its own 200-day — and scores on the depth-matched rebound. One caveat is specific and important: ServiceNow has <strong>no days in its own history</strong> at its current depth that also have a completed forward year, so it is scored on the <em>peer</em> figure for that depth bucket. Across the quality names on this board, buying at ≤−50% returned a median <strong>+58%</strong> over the next year against <strong>+36%</strong> at −20/−30%, monotonically rising in between, across 14 calendar years and 13 names. Depth has been a signal, not a warning.</p>
+    <p style="margin-top:12px"><strong>On tier, it sits at CONDITIONAL, and that is contestable.</strong> Its rebound statistics fall inside the PRIME band — between TSM and NVDA, both of which carry PRIME with negative worst-decile outcomes — and its 9-of-10 recovery record beats several PRIME names. Two arguments hold it back. First, every other PRIME name is a platform or monopoly mega-cap and ServiceNow is a ~$20B-revenue application vendor: a real moat, a different weight class. Second, its crash is <em>idiosyncratic</em> rather than macro — every PRIME name's worst drawdown was the 2022 rate shock or COVID, and a company-specific 65% fall is the shape a value trap makes.</p>
+    <div class="callout" style="border-left-color:var(--brass);margin-top:18px">
+      <h2 style="font-size:20px">The one number to watch</h2>
+      <p style="max-width:none"><strong>The renewal rate.</strong> If AI genuinely erodes seat-based software, it shows up there before it shows up anywhere else — and long before it shows up in the share price. Six years at 98% is the strongest single piece of evidence that the disruption has not started. <strong>A slip below ~96%, or net expansion cracking, would break the thesis on this page</strong> and should be treated as decisive. Everything else here is commentary.</p>
+      <p style="max-width:none;margin-top:12px"><em>Not advice — a mechanical framework plus stated reasoning. The central unknown, whether AI agents erode seat-based software, is unresolved and could reprice all of this at once.</em></p>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Sources.</strong> Q2 FY26 results and guidance, ServiceNow 8-K and investor materials (22 Jul 2026). Non-seat ACV mix from CFO Gina Mastantuono, April 2026. Armis ($7.75B, completed 20 Apr 2026) and Veza (completed Mar 2026) from ServiceNow newsroom releases. AI Control Tower scope and the Microsoft Agent 365 integration from ServiceNow newsroom, May–Jun 2026. Bear-case figures from Gartner ($234B diverted by 2030) and IDC (seat pricing obsolete by 2028, 70% of vendors refactoring). ERP displacement evidence from Constellation Research and ERP Research. Renewal rate and revenue history from company filings.</p>
+    <p style="margin-top:14px">Price, off-high, vs-200-day and the rebound statistics are computed from adjusted daily closes and refresh daily with the main board. Company figures and all written argument are dated and do not refresh — treat the words as of the date above and the numbers as of today's close.</p>
+    <div class="disclaim">
+      <strong>Not investment advice.</strong> Educational framework only, prepared as a public reference. Numbers are approximate and dated mid-2026; company disclosures are management's own and unaudited between filings. Do your own diligence.
+    </div>
+    <p style="margin-top:16px"><a href="index.html">← back to the full board</a></p>
+  </footer>
+
+</div></div>
+
+
+<script>
+/* Column sorting. Deliberately dependency-free: this page is a self-contained
+   static artifact regenerated by cron, so a CDN table library would add a live
+   network dependency and fight the existing styles for ~40 lines of behaviour.
+   Values come from data-v where the generator knows the number, otherwise they
+   are inferred from the cell (tier badge > moat stars > first number > text). */
+(function () {
+  var TIER = { 'b-prime': 0, 'b-cond': 1, 'b-frag': 2, 'b-avoid': 3, 'b-wait': 4 };
+
+  function value(td) {
+    if (td.dataset.v !== undefined && td.dataset.v !== '') return parseFloat(td.dataset.v);
+    if (td.classList.contains('tick')) return NaN;                    // tickers sort as text
+    var badge = td.querySelector('.badge');
+    if (badge) {
+      for (var i = 0; i < badge.classList.length; i++) {
+        if (badge.classList[i] in TIER) return TIER[badge.classList[i]];
+      }
+    }
+    if (td.classList.contains('moat')) {                              // count only lit stars
+      var all = (td.textContent.match(/★/g) || []).length, dim = 0;
+      td.querySelectorAll('.off').forEach(function (e) {
+        dim += (e.textContent.match(/★/g) || []).length;
+      });
+      return all - dim;
+    }
+    var txt = td.textContent.replace(/−/g, '-').replace(/,/g, '');
+    var m = txt.match(/-?\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : NaN;
+  }
+
+  document.querySelectorAll('.table-scroll:not(.why-table) table').forEach(function (tbl) {
+    if (!tbl.tHead || !tbl.tBodies.length) return;
+    var ths = [].slice.call(tbl.tHead.rows[0].cells);
+    var body = tbl.tBodies[0];
+    var original = [].slice.call(body.rows);
+
+    ths.forEach(function (th, i) {
+      th.classList.add('sortable');
+      th.tabIndex = 0;
+      th.setAttribute('role', 'button');
+
+      function sort() {
+        // asc -> desc -> back to the page's own ordering
+        var dir = th.dataset.dir === 'asc' ? 'desc' : (th.dataset.dir === 'desc' ? '' : 'asc');
+        ths.forEach(function (o) { delete o.dataset.dir; });
+        if (!dir) { original.forEach(function (r) { body.appendChild(r); }); return; }
+        th.dataset.dir = dir;
+        var s = dir === 'asc' ? 1 : -1;
+        [].slice.call(body.rows).sort(function (a, b) {
+          var x = value(a.cells[i]), y = value(b.cells[i]);
+          var xn = isNaN(x), yn = isNaN(y);
+          if (xn && yn) {                                             // text compare
+            return a.cells[i].textContent.trim()
+                    .localeCompare(b.cells[i].textContent.trim()) * s;
+          }
+          if (xn) return 1;                                           // blanks/— always last
+          if (yn) return -1;
+          return (x - y) * s;
+        }).forEach(function (r) { body.appendChild(r); });
+      }
+
+      th.addEventListener('click', sort);
+      th.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sort(); }
+      });
+    });
+
+    var hint = document.createElement('p');
+    hint.className = 'sort-hint';
+    hint.textContent = 'Click any column to sort · click again to reverse · a third time restores the original order';
+    tbl.parentNode.insertAdjacentElement('afterend', hint);
+  });
+
+  /* Column tooltips. One fixed box, clamped to the viewport, so the table
+     wrapper's overflow can never clip it. */
+  var heads = document.querySelectorAll('th[data-tip]');
+  if (!heads.length) return;
+  var tip = document.createElement('div');
+  tip.className = 'tipbox';
+  tip.setAttribute('role', 'tooltip');
+  document.body.appendChild(tip);
+
+  function show(th) {
+    tip.innerHTML = '';
+    var label = document.createElement('b');
+    label.textContent = th.textContent.trim();
+    tip.appendChild(label);
+    tip.appendChild(document.createTextNode(th.getAttribute('data-tip')));
+    tip.classList.add('on');
+    tip.style.left = '0px';
+    tip.style.top = '0px';
+    var r = th.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
+    var top = r.bottom + 8;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 8);
+    tip.style.left = Math.max(8, left) + 'px';
+    tip.style.top = top + 'px';
+  }
+  function hide() { tip.classList.remove('on'); }
+
+  heads.forEach(function (th) {
+    th.addEventListener('mouseenter', function () { show(th); });
+    th.addEventListener('mouseleave', hide);
+    th.addEventListener('focus', function () { show(th); });
+    th.addEventListener('blur', hide);
+  });
+  window.addEventListener('scroll', hide, true);
+})();
+</script>
+</body>
+</html>
